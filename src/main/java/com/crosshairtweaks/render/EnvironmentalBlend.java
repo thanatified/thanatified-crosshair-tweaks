@@ -1,11 +1,12 @@
 package com.crosshairtweaks.render;
 
 import com.crosshairtweaks.config.CrosshairConfig;
+import com.crosshairtweaks.config.SamplingMode;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.util.Window;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 
@@ -13,14 +14,12 @@ public final class EnvironmentalBlend {
 
     private EnvironmentalBlend() {}
 
-    private static final int SAMPLE_RADIUS = 2;
-
     public static int computeColor(CrosshairConfig config, int baseArgb) {
         if (!config.blendEnabled) {
             return baseArgb;
         }
 
-        float[] bg = sampleBackground();
+        float[] bg = sampleBackground(config);
         if (bg == null) {
             return baseArgb;
         }
@@ -62,73 +61,76 @@ public final class EnvironmentalBlend {
         return (alpha << 24) | (finalR << 16) | (finalG << 8) | finalB;
     }
 
-    private static float[] sampleBackground() {
+    private static float[] sampleBackground(CrosshairConfig config) {
         MinecraftClient client = MinecraftClient.getInstance();
         Window window = client.getWindow();
         if (window == null) {
             return null;
         }
 
-        Framebuffer fb = client.getFramebuffer();
-        if (fb == null || fb.getColorAttachment() == null) {
+        int fbWidth = window.getFramebufferWidth();
+        int fbHeight = window.getFramebufferHeight();
+        if (fbWidth <= 0 || fbHeight <= 0) {
             return null;
         }
 
-        int texWidth = fb.textureWidth;
-        int texHeight = fb.textureHeight;
-
-        if (texWidth <= 0 || texHeight <= 0) {
-            return null;
+        int radius;
+        SamplingMode mode = config.samplingMode;
+        if (mode == null) {
+            mode = SamplingMode.SMALL;
         }
 
-        int centerX = texWidth / 2;
-        int centerY = texHeight / 2;
+        switch (mode) {
+            case CENTER:
+                radius = 0;
+                break;
+            case SMALL:
+                radius = 3;  // 7x7
+                break;
+            case LARGE:
+                radius = 10; // 21x21
+                break;
+            default:
+                radius = 3;
+                break;
+        }
 
-        int size = SAMPLE_RADIUS * 2 + 1;
-        int startX = Math.max(0, centerX - SAMPLE_RADIUS);
-        int startY = Math.max(0, centerY - SAMPLE_RADIUS);
+        int size = radius * 2 + 1;
 
-        int pixelCount = texWidth * texHeight;
-        ByteBuffer fullBuffer = BufferUtils.createByteBuffer(4 * pixelCount);
+        int centerX = fbWidth / 2;
+        int centerY = fbHeight / 2;
 
-        // ⭐ Correct API for MC 1.21.11 — GpuTexture has the GL ID
-        int texId = fb.getColorAttachment().getGlId();
+        int startX = Math.max(0, centerX - radius);
+        int startY = Math.max(0, centerY - radius);
 
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
-        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, fullBuffer);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        ByteBuffer pixelBuffer = BufferUtils.createByteBuffer(4 * size * size);
+
+        int previousReadFb = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING);
+        // Read from the currently bound framebuffer (Minecraft manages this internally)
+        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, 0);
+
+        GL11.glReadPixels(startX, startY, size, size, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, pixelBuffer);
+
+        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, previousReadFb);
 
         long sumR = 0, sumG = 0, sumB = 0;
-        int sampleCount = 0;
+        int count = size * size;
 
-        for (int y = 0; y < size; y++) {
-            int py = startY + y;
-            if (py < 0 || py >= texHeight) continue;
+        for (int i = 0; i < count; i++) {
+            int base = i * 4;
+            int r = pixelBuffer.get(base) & 0xFF;
+            int g = pixelBuffer.get(base + 1) & 0xFF;
+            int b = pixelBuffer.get(base + 2) & 0xFF;
 
-            for (int x = 0; x < size; x++) {
-                int px = startX + x;
-                if (px < 0 || px >= texWidth) continue;
-
-                int index = (py * texWidth + px) * 4;
-                int r = fullBuffer.get(index) & 0xFF;
-                int g = fullBuffer.get(index + 1) & 0xFF;
-                int b = fullBuffer.get(index + 2) & 0xFF;
-
-                sumR += r;
-                sumG += g;
-                sumB += b;
-                sampleCount++;
-            }
-        }
-
-        if (sampleCount == 0) {
-            return null;
+            sumR += r;
+            sumG += g;
+            sumB += b;
         }
 
         return new float[]{
-                (sumR / (float) sampleCount) / 255f,
-                (sumG / (float) sampleCount) / 255f,
-                (sumB / (float) sampleCount) / 255f
+                (sumR / (float) count) / 255f,
+                (sumG / (float) count) / 255f,
+                (sumB / (float) count) / 255f
         };
     }
 
