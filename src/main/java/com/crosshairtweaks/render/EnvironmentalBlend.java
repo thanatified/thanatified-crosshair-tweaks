@@ -11,13 +11,9 @@ import java.nio.ByteBuffer;
 
 public final class EnvironmentalBlend {
 
-    private EnvironmentalBlend() {
-    }
+    private EnvironmentalBlend() {}
 
     private static final int SAMPLE_RADIUS = 2;
-
-    private static final ByteBuffer PIXEL_BUFFER =
-            BufferUtils.createByteBuffer(4 * (SAMPLE_RADIUS * 2 + 1) * (SAMPLE_RADIUS * 2 + 1));
 
     public static int computeColor(CrosshairConfig config, int baseArgb) {
         if (!config.blendEnabled) {
@@ -74,7 +70,7 @@ public final class EnvironmentalBlend {
         }
 
         Framebuffer fb = client.getFramebuffer();
-        if (fb == null || fb.getColorAttachmentView() == null) {
+        if (fb == null || fb.getColorAttachment() == null) {
             return null;
         }
 
@@ -92,11 +88,12 @@ public final class EnvironmentalBlend {
         int startX = Math.max(0, centerX - SAMPLE_RADIUS);
         int startY = Math.max(0, centerY - SAMPLE_RADIUS);
 
-        // Read the entire texture, then sample the center region from the buffer
         int pixelCount = texWidth * texHeight;
         ByteBuffer fullBuffer = BufferUtils.createByteBuffer(4 * pixelCount);
 
-        int texId = fb.getColorAttachmentView().getGlId();
+        // ⭐ Correct API for MC 1.21.11 — GpuTexture has the GL ID
+        int texId = fb.getColorAttachment().getGlId();
+
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
         GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, fullBuffer);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -143,4 +140,3 @@ public final class EnvironmentalBlend {
         return a + (b - a) * t;
     }
 }
-
