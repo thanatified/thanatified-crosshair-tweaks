@@ -28,7 +28,7 @@ jobs:
 
       # ⭐ FORCE LOOM TO DOWNLOAD MINECRAFT FIRST
       - name: Pre-download Minecraft
-        run: ./gradlew --refresh-dependencies
+        run: ./gradlew build --refresh-dependencies || true
 
       # ⭐ DEBUG STEP 1 — locate Framebuffer.class
       - name: Locate Framebuffer
