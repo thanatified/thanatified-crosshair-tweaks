@@ -84,8 +84,8 @@ public final class EnvironmentalBlend {
 
         int previousReadFb = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING);
 
-        // ✔ Correct for MC 1.21.11
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, fb.getFbo());
+        // ✔ FIXED — your version still uses fb.fbo
+        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, fb.fbo);
 
         GL11.glReadPixels(startX, startY, size, size, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, PIXEL_BUFFER);
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, previousReadFb);
