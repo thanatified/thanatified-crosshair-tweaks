@@ -40,3 +40,4 @@ public class CrosshairTweaksClient implements ClientModInitializer {
     public static MinecraftClient client() {
         return MinecraftClient.getInstance();
     }
+}
