@@ -26,17 +26,14 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # ⭐ FIRST BUILD — forces Loom to download Minecraft
       - name: First build (download Minecraft)
         run: ./gradlew build --refresh-dependencies || true
 
-      # ⭐ DEBUG STEP 1 — locate Framebuffer.class
       - name: Locate Framebuffer
         run: |
           echo "Searching for Framebuffer.class..."
           find ~/.gradle -name "Framebuffer.class" -print || echo "Framebuffer not found"
 
-      # ⭐ DEBUG STEP 2 — dump Framebuffer methods/fields
       - name: Dump Framebuffer
         run: |
           echo "Dumping Framebuffer class..."
@@ -45,7 +42,6 @@ jobs:
             javap -classpath "$jar" net.minecraft.client.gl.Framebuffer 2>/dev/null && break
           done
 
-      # ⭐ SECOND BUILD — your actual mod build
       - name: Run build
         run: ./gradlew build
 
