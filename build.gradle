@@ -11,25 +11,32 @@ base {
 }
 
 repositories {
+    // Mod Menu
     maven {
-        name = 'Terraformers (Mod Menu)'
-        url = 'https://maven.terraformersmc.com/releases/'
+        name = "Terraformers (Mod Menu)"
+        url = "https://maven.terraformersmc.com/releases/"
+    }
+
+    // Cloth Config (required!)
+    maven {
+        name = "Shedaniel Maven"
+        url = "https://maven.shedaniel.me/"
     }
 }
 
 dependencies {
-    // Versions are defined in gradle.properties
+    // Versions defined in gradle.properties
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    // Fabric API — required for most mods
+    // Fabric API
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // Mod Menu — UI integration
+    // Mod Menu
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    // Cloth Config — required for ModMenu config screens
+    // Cloth Config (correct version)
     modImplementation "me.shedaniel.cloth:cloth-config-fabric:14.0.130"
 }
 
@@ -56,4 +63,3 @@ jar {
         rename { "${it}_${project.base.archivesName.get()}" }
     }
 }
-
