@@ -61,6 +61,22 @@ jobs:
             javap -classpath "$jar" net.minecraft.client.gl.Framebuffer 2>/dev/null && echo "FOUND IN: $jar" && break
           done
 
+      # ⭐ DEBUG STEP 5 — dump GpuTexture
+      - name: Dump GpuTexture
+        run: |
+          echo "Dumping GpuTexture..."
+          for jar in $(find ~/.gradle -name "*.jar"); do
+            javap -classpath "$jar" com.mojang.blaze3d.textures.GpuTexture 2>/dev/null && echo "FOUND IN: $jar" && break
+          done
+
+      # ⭐ DEBUG STEP 6 — dump GpuTextureView
+      - name: Dump GpuTextureView
+        run: |
+          echo "Dumping GpuTextureView..."
+          for jar in $(find ~/.gradle -name "*.jar"); do
+            javap -classpath "$jar" com.mojang.blaze3d.textures.GpuTextureView 2>/dev/null && echo "FOUND IN: $jar" && break
+          done
+
       # ⭐ SECOND BUILD — your actual mod build
       - name: Run build
         run: ./gradlew build
