@@ -26,7 +26,7 @@ public class CrosshairTweaksClient implements ClientModInitializer {
                 "key.crosshairtweaks.open_config",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_COMMA,
-                Category.create(new Identifier("crosshairtweaks:category"))
+                Category.create(new Identifier("crosshairtweaks", "category"))
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
