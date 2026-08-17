@@ -26,12 +26,12 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # ⭐ Setup Gradle FIRST — this is required before Loom downloads Minecraft
+      # ⭐ Setup Gradle FIRST
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      # ⭐ Force Loom to download Minecraft NOW
-      - name: Pre-download Minecraft
+      # ⭐ FIRST BUILD — forces Loom to download Minecraft
+      - name: First build (download Minecraft)
         run: ./gradlew build --refresh-dependencies || true
 
       # ⭐ DEBUG STEP 1 — locate Framebuffer.class
@@ -49,7 +49,7 @@ jobs:
             javap -classpath "$jar" net.minecraft.client.gl.Framebuffer 2>/dev/null && break
           done
 
-      # ⭐ Now run the actual build
+      # ⭐ SECOND BUILD — your actual mod build
       - name: Run build
         run: ./gradlew build
 
