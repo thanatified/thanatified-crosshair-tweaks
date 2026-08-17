@@ -29,11 +29,13 @@ jobs:
       # ⭐ DEBUG STEP 1 — locate Framebuffer.class
       - name: Locate Framebuffer
         run: |
+          echo "Searching for Framebuffer.class..."
           find ~/.gradle -name "Framebuffer.class" -print || echo "Framebuffer not found"
 
       # ⭐ DEBUG STEP 2 — dump Framebuffer methods/fields
       - name: Dump Framebuffer
         run: |
+          echo "Dumping Framebuffer class..."
           for jar in $(find ~/.gradle -name "*.jar"); do
             echo "Checking $jar"
             javap -classpath "$jar" net.minecraft.client.gl.Framebuffer 2>/dev/null && break
@@ -56,3 +58,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: build/libs/*.jar
+
