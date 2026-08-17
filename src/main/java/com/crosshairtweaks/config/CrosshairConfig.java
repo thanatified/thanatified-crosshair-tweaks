@@ -11,10 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * JSON-backed config for Crosshair Tweaks.
- * Matches all fields used in mixins + rendering.
- */
 public class CrosshairConfig {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -80,4 +76,3 @@ public class CrosshairConfig {
         }
     }
 }
-
