@@ -26,6 +26,19 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      # ⭐ DEBUG STEP 1 — locate Framebuffer.class
+      - name: Locate Framebuffer
+        run: |
+          find ~/.gradle -name "Framebuffer.class" -print || echo "Framebuffer not found"
+
+      # ⭐ DEBUG STEP 2 — dump Framebuffer methods/fields
+      - name: Dump Framebuffer
+        run: |
+          for jar in $(find ~/.gradle -name "*.jar"); do
+            echo "Checking $jar"
+            javap -classpath "$jar" net.minecraft.client.gl.Framebuffer 2>/dev/null && break
+          done
+
       - name: Build with Gradle
         uses: gradle/actions/setup-gradle@v4
 
@@ -38,8 +51,6 @@ jobs:
           name: thanatifiedcrosshairtweaks
           path: build/libs/*.jar
 
-      # Only runs when you push a tag like "v1.0.0" - attaches the jar
-      # straight to a GitHub Release instead of just a workflow artifact.
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
