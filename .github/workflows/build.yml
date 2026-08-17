@@ -26,10 +26,6 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # ⭐ Setup Gradle FIRST
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
       # ⭐ FIRST BUILD — forces Loom to download Minecraft
       - name: First build (download Minecraft)
         run: ./gradlew build --refresh-dependencies || true
