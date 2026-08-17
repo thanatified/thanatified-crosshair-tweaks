@@ -1,0 +1,42 @@
+{
+	"key.crosshairtweaks.open_config": "Open Crosshair Tweaks",
+	"key.category.crosshairtweaks": "Crosshair Tweaks",
+
+	"crosshairtweaks.title": "Thanatified Crosshair Tweaks",
+
+	"crosshairtweaks.section.normal": "Normal Crosshair",
+	"crosshairtweaks.section.player": "Player-Target Crosshair",
+	"crosshairtweaks.section.blend": "Environmental Blend",
+
+	"crosshairtweaks.shape": "Shape",
+	"crosshairtweaks.size": "Size",
+	"crosshairtweaks.thickness": "Thickness",
+	"crosshairtweaks.gap": "Gap",
+	"crosshairtweaks.color": "Color",
+	"crosshairtweaks.opacity": "Opacity",
+	"crosshairtweaks.outline": "Outline",
+	"crosshairtweaks.outline_thickness": "Outline Thickness",
+
+	"crosshairtweaks.player.enabled": "Change on Player",
+	"crosshairtweaks.player.shape": "Player Shape",
+	"crosshairtweaks.player.color": "Player Color",
+	"crosshairtweaks.player.size": "Player Size",
+
+	"crosshairtweaks.blend.enabled": "Enable Smart Blend",
+	"crosshairtweaks.blend.strength": "Blend Strength",
+	"crosshairtweaks.blend.gray_fix": "Fix Gray Blocks",
+	"crosshairtweaks.blend.gray_threshold": "Gray Sensitivity",
+	"crosshairtweaks.blend.dark_color": "Dark Mode Color",
+	"crosshairtweaks.blend.light_color": "Light Mode Color",
+
+	"crosshairtweaks.button.reset": "Reset to Defaults",
+	"crosshairtweaks.button.done": "Done",
+
+	"crosshairtweaks.shape.cross": "Cross",
+	"crosshairtweaks.shape.dot": "Dot",
+	"crosshairtweaks.shape.circle": "Circle Outline",
+	"crosshairtweaks.shape.square": "Square Outline",
+	"crosshairtweaks.shape.t_shape": "T-Shape",
+	"crosshairtweaks.shape.chevron": "Chevron",
+	"crosshairtweaks.shape.diamond": "Diamond"
+}

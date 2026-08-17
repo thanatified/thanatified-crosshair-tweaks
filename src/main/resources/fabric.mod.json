@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "thanatifiedcrosshairtweaks",
+	"version": "${version}",
+	"name": "Thanatified Crosshair Tweaks",
+	"description": "Fully customizable crosshair: shape, color, size, a distinct look when aiming at players, and a sharper environmental blend that actually works on gray blocks.",
+	"authors": ["you"],
+	"contact": {},
+	"license": "CC0-1.0",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.crosshairtweaks.CrosshairTweaksClient"
+		],
+		"modmenu": [
+			"com.crosshairtweaks.integration.CrosshairTweaksModMenu"
+		]
+	},
+	"mixins": [
+		"thanatifiedcrosshairtweaks.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"fabric-api": "*",
+		"minecraft": "~1.21.11",
+		"java": ">=21"
+	},
+	"recommends": {
+		"modmenu": "*"
+	}
+}
