@@ -12,8 +12,7 @@ import java.nio.ByteBuffer;
 
 public final class EnvironmentalBlend {
 
-    private EnvironmentalBlend() {
-    }
+    private EnvironmentalBlend() {}
 
     private static final int SAMPLE_RADIUS = 2;
 
@@ -21,14 +20,10 @@ public final class EnvironmentalBlend {
             BufferUtils.createByteBuffer(4 * (SAMPLE_RADIUS * 2 + 1) * (SAMPLE_RADIUS * 2 + 1));
 
     public static int computeColor(CrosshairConfig config, int baseArgb) {
-        if (!config.blendEnabled) {
-            return baseArgb;
-        }
+        if (!config.blendEnabled) return baseArgb;
 
         float[] bg = sampleBackground();
-        if (bg == null) {
-            return baseArgb;
-        }
+        if (bg == null) return baseArgb;
 
         float r = bg[0], g = bg[1], b = bg[2];
         float luminance = 0.299f * r + 0.587f * g + 0.114f * b;
@@ -70,14 +65,10 @@ public final class EnvironmentalBlend {
     private static float[] sampleBackground() {
         MinecraftClient client = MinecraftClient.getInstance();
         Window window = client.getWindow();
-        if (window == null) {
-            return null;
-        }
+        if (window == null) return null;
 
         Framebuffer fb = client.getFramebuffer();
-        if (fb == null) {
-            return null;
-        }
+        if (fb == null) return null;
 
         int fbWidth = window.getFramebufferWidth();
         int fbHeight = window.getFramebufferHeight();
@@ -93,8 +84,8 @@ public final class EnvironmentalBlend {
 
         int previousReadFb = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING);
 
-        // Correct framebuffer binding for MC 1.21.x
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, fb.getColorAttachment().getGlId());
+        // ✔ Correct for MC 1.21.11
+        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, fb.getFbo());
 
         GL11.glReadPixels(startX, startY, size, size, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, PIXEL_BUFFER);
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, previousReadFb);
