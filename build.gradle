@@ -10,17 +10,19 @@ base {
     archivesName = project.archives_base_name
 }
 
-repositories {
-    // Mod Menu
+
+repositories {   // ⭐ THIS IS WHERE THE REPO BLOCK GOES
     maven {
-        name = "Terraformers (Mod Menu)"
+        name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/releases/"
     }
-
-    // Cloth Config (required!)
     maven {
-        name = "Shedaniel Maven"
-        url = "https://maven.shedaniel.me/"
+        name = "Shedaniel Releases"
+        url = "https://maven.shedaniel.me/releases/"
+    }
+    maven {
+        name = "Shedaniel Snapshots"
+        url = "https://maven.shedaniel.me/snapshots/"
     }
 }
 
