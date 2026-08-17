@@ -26,7 +26,11 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # ⭐ FORCE LOOM TO DOWNLOAD MINECRAFT FIRST
+      # ⭐ Setup Gradle FIRST — this is required before Loom downloads Minecraft
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # ⭐ Force Loom to download Minecraft NOW
       - name: Pre-download Minecraft
         run: ./gradlew build --refresh-dependencies || true
 
@@ -45,9 +49,7 @@ jobs:
             javap -classpath "$jar" net.minecraft.client.gl.Framebuffer 2>/dev/null && break
           done
 
-      - name: Build with Gradle
-        uses: gradle/actions/setup-gradle@v4
-
+      # ⭐ Now run the actual build
       - name: Run build
         run: ./gradlew build
 
