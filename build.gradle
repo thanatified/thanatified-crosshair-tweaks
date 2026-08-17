@@ -39,7 +39,7 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // Cloth Config (correct version)
-    modImplementation "me.shedaniel.cloth:cloth-config-fabric:14.0.130"
+    modImplementation "me.shedaniel.cloth:cloth-config-fabric:14.0.121"
 }
 
 processResources {
