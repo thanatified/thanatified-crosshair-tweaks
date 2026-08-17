@@ -30,7 +30,7 @@ dependencies {
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     // Cloth Config — required for ModMenu config screens
-    modImplementation "me.shedaniel.cloth:cloth-config-fabric:14.0.126"
+    modImplementation "me.shedaniel.cloth:cloth-config-fabric:14.0.130"
 }
 
 processResources {
@@ -56,3 +56,4 @@ jar {
         rename { "${it}_${project.base.archivesName.get()}" }
     }
 }
+
