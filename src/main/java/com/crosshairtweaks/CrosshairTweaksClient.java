@@ -9,7 +9,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.option.KeyBinding.Category;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class CrosshairTweaksClient implements ClientModInitializer {
@@ -26,7 +25,7 @@ public class CrosshairTweaksClient implements ClientModInitializer {
                 "key.crosshairtweaks.open_config",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_COMMA,
-                Category.create(new Identifier("crosshairtweaks", "category"))
+                Category.GAMEPLAY   // ✔ FIXED — custom categories not supported
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
