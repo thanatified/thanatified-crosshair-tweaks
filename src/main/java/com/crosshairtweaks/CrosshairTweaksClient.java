@@ -25,13 +25,13 @@ public class CrosshairTweaksClient implements ClientModInitializer {
                 "key.crosshairtweaks.open_config",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_COMMA,
-                Category.GAMEPLAY   // ✔ FIXED — custom categories not supported
+                Category.GAMEPLAY
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openConfigKey.wasPressed()) {
                 if (client.currentScreen == null) {
-                    client.setScreen(new CrosshairConfigScreen(null, CONFIG));
+                    client.setScreen(new CrosshairConfigScreen(null));
                 }
             }
         });
