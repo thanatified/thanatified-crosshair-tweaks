@@ -14,8 +14,8 @@ public class CrosshairConfigScreen extends Screen {
 
     private final Screen parent;
 
+    // Local copies of config values
     private boolean playerEnabled;
-    private int playerSize;
     private int size;
     private int thickness;
     private int gap;
@@ -26,8 +26,8 @@ public class CrosshairConfigScreen extends Screen {
         this.parent = parent;
 
         CrosshairConfig cfg = CrosshairTweaksClient.CONFIG;
+
         this.playerEnabled = cfg.playerEnabled;
-        this.playerSize = cfg.playerSize;
         this.size = cfg.size;
         this.thickness = cfg.thickness;
         this.gap = cfg.gap;
@@ -37,12 +37,14 @@ public class CrosshairConfigScreen extends Screen {
     @Override
     protected void init() {
 
+        // Title
         this.addDrawableChild(new TextWidget(
                 this.width / 2 - 80, 20, 160, 20,
                 Text.literal("Crosshair Tweaks Settings"),
                 this.textRenderer
         ));
 
+        // Toggle: Player Highlight
         CheckboxWidget playerToggle = CheckboxWidget.builder(
                 Text.literal("Player Highlight"), this.textRenderer)
                 .pos(this.width / 2 - 100, 60)
@@ -50,6 +52,7 @@ public class CrosshairConfigScreen extends Screen {
                 .build();
         this.addDrawableChild(playerToggle);
 
+        // Slider: Crosshair Size
         SliderWidget sizeSlider = new SliderWidget(
                 this.width / 2 - 100, 100, 200, 20,
                 Text.literal("Crosshair Size: " + size),
@@ -67,6 +70,7 @@ public class CrosshairConfigScreen extends Screen {
         };
         this.addDrawableChild(sizeSlider);
 
+        // Toggle: Outline
         CheckboxWidget outlineToggle = CheckboxWidget.builder(
                 Text.literal("Outline"), this.textRenderer)
                 .pos(this.width / 2 - 100, 140)
@@ -74,7 +78,9 @@ public class CrosshairConfigScreen extends Screen {
                 .build();
         this.addDrawableChild(outlineToggle);
 
+        // Save Button
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Save"), button -> {
+
             CrosshairConfig cfg = CrosshairTweaksClient.CONFIG;
 
             cfg.playerEnabled = playerToggle.isChecked();
@@ -86,6 +92,7 @@ public class CrosshairConfigScreen extends Screen {
 
         }).dimensions(this.width / 2 - 100, 180, 90, 20).build());
 
+        // Cancel Button
         this.addDrawableChild(ButtonWidget.builder(Text.literal("Cancel"), button -> {
             this.client.setScreen(parent);
         }).dimensions(this.width / 2 + 10, 180, 90, 20).build());
@@ -93,7 +100,13 @@ public class CrosshairConfigScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
+
+        // ⭐ IMPORTANT ⭐
+        // DO NOT CALL renderBackground() — it triggers blur and crashes with Polyblur/Sodium.
+        // Just draw a flat dark background instead.
+
+        context.fill(0, 0, this.width, this.height, 0xAA000000);
+
         super.render(context, mouseX, mouseY, delta);
     }
 }
