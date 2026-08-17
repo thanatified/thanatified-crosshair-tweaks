@@ -1,13 +1,14 @@
 package com.crosshairtweaks.config;
 
 public enum CrosshairShape {
-	CROSS("crosshairtweaks.shape.cross"),
-	DOT("crosshairtweaks.shape.dot"),
-	CIRCLE("crosshairtweaks.shape.circle"),
-	SQUARE("crosshairtweaks.shape.square"),
-	T_SHAPE("crosshairtweaks.shape.t_shape"),
-	CHEVRON("crosshairtweaks.shape.chevron"),
-	DIAMOND("crosshairtweaks.shape.diamond");
+    DEFAULT("crosshairtweaks.shape.default"),
+    CROSS("crosshairtweaks.shape.cross"),
+    DOT("crosshairtweaks.shape.dot"),
+    CIRCLE("crosshairtweaks.shape.circle"),
+    SQUARE("crosshairtweaks.shape.square"),
+    T_SHAPE("crosshairtweaks.shape.t_shape"),
+    CHEVRON("crosshairtweaks.shape.chevron"),
+    DIAMOND("crosshairtweaks.shape.diamond");
 
 	private final String translationKey;
 
