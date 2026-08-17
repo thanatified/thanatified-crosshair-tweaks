@@ -26,8 +26,11 @@ dependencies {
     // Fabric API — required for most mods
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // Mod Menu — compile‑time only
+    // Mod Menu — UI integration
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+    // Cloth Config — required for ModMenu config screens
+    modImplementation "me.shedaniel.cloth:cloth-config-fabric:14.0.126"
 }
 
 processResources {
