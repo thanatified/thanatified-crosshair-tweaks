@@ -6,13 +6,13 @@ import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.util.Window;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
 
 import java.nio.ByteBuffer;
 
 public final class EnvironmentalBlend {
 
-    private EnvironmentalBlend() {}
+    private EnvironmentalBlend() {
+    }
 
     private static final int SAMPLE_RADIUS = 2;
 
@@ -20,10 +20,14 @@ public final class EnvironmentalBlend {
             BufferUtils.createByteBuffer(4 * (SAMPLE_RADIUS * 2 + 1) * (SAMPLE_RADIUS * 2 + 1));
 
     public static int computeColor(CrosshairConfig config, int baseArgb) {
-        if (!config.blendEnabled) return baseArgb;
+        if (!config.blendEnabled) {
+            return baseArgb;
+        }
 
         float[] bg = sampleBackground();
-        if (bg == null) return baseArgb;
+        if (bg == null) {
+            return baseArgb;
+        }
 
         float r = bg[0], g = bg[1], b = bg[2];
         float luminance = 0.299f * r + 0.587f * g + 0.114f * b;
@@ -65,44 +69,69 @@ public final class EnvironmentalBlend {
     private static float[] sampleBackground() {
         MinecraftClient client = MinecraftClient.getInstance();
         Window window = client.getWindow();
-        if (window == null) return null;
+        if (window == null) {
+            return null;
+        }
 
         Framebuffer fb = client.getFramebuffer();
-        if (fb == null) return null;
+        if (fb == null || fb.getColorAttachmentView() == null) {
+            return null;
+        }
 
-        int fbWidth = window.getFramebufferWidth();
-        int fbHeight = window.getFramebufferHeight();
+        int texWidth = fb.textureWidth;
+        int texHeight = fb.textureHeight;
 
-        int centerX = fbWidth / 2;
-        int centerY = fbHeight - (fbHeight / 2);
+        if (texWidth <= 0 || texHeight <= 0) {
+            return null;
+        }
+
+        int centerX = texWidth / 2;
+        int centerY = texHeight / 2;
 
         int size = SAMPLE_RADIUS * 2 + 1;
         int startX = Math.max(0, centerX - SAMPLE_RADIUS);
         int startY = Math.max(0, centerY - SAMPLE_RADIUS);
 
-        PIXEL_BUFFER.clear();
+        // Read the entire texture, then sample the center region from the buffer
+        int pixelCount = texWidth * texHeight;
+        ByteBuffer fullBuffer = BufferUtils.createByteBuffer(4 * pixelCount);
 
-        int previousReadFb = GL11.glGetInteger(GL30.GL_READ_FRAMEBUFFER_BINDING);
-
-        // ✔ FIXED — your version still uses fb.fbo
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, fb.fbo);
-
-        GL11.glReadPixels(startX, startY, size, size, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, PIXEL_BUFFER);
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, previousReadFb);
+        int texId = fb.getColorAttachmentView().getGlId();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texId);
+        GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, fullBuffer);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
         long sumR = 0, sumG = 0, sumB = 0;
-        int count = size * size;
-        for (int i = 0; i < count; i++) {
-            int base = i * 4;
-            sumR += PIXEL_BUFFER.get(base) & 0xFF;
-            sumG += PIXEL_BUFFER.get(base + 1) & 0xFF;
-            sumB += PIXEL_BUFFER.get(base + 2) & 0xFF;
+        int sampleCount = 0;
+
+        for (int y = 0; y < size; y++) {
+            int py = startY + y;
+            if (py < 0 || py >= texHeight) continue;
+
+            for (int x = 0; x < size; x++) {
+                int px = startX + x;
+                if (px < 0 || px >= texWidth) continue;
+
+                int index = (py * texWidth + px) * 4;
+                int r = fullBuffer.get(index) & 0xFF;
+                int g = fullBuffer.get(index + 1) & 0xFF;
+                int b = fullBuffer.get(index + 2) & 0xFF;
+
+                sumR += r;
+                sumG += g;
+                sumB += b;
+                sampleCount++;
+            }
+        }
+
+        if (sampleCount == 0) {
+            return null;
         }
 
         return new float[]{
-                (sumR / (float) count) / 255f,
-                (sumG / (float) count) / 255f,
-                (sumB / (float) count) / 255f
+                (sumR / (float) sampleCount) / 255f,
+                (sumG / (float) sampleCount) / 255f,
+                (sumB / (float) sampleCount) / 255f
         };
     }
 
@@ -114,3 +143,4 @@ public final class EnvironmentalBlend {
         return a + (b - a) * t;
     }
 }
+
